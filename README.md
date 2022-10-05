@@ -28,3 +28,28 @@ Looking for input if anyone knows Javascript.
 	}(document, 'script'));
 </script>
 ```
+
+The solution is to set the timeout on the RefTagger script so it will not run for 3 seconds after the initial page load.  This will allow the Wix javascript file to run first so that the RefTagger.js will overwrite the variables vs getting its functions/variables overwritten.  If your site loads slow, you many need to increase the timeout from 3 seconds to 4 or 5.  You will see a three second delay before RefTagger starts working.
+
+In Wix, set this script to only run on the Post page for the blog.  The script w/o the SetTimeout works fine on static pages.
+
+```
+<script>
+var refTagger = {
+settings: {
+bibleVersion: 'NKJV'
+}
+};
+
+setTimeout(() => {
+(function(d, t) {
+var n=d.querySelector('[nonce]');
+refTagger.settings.nonce = n && (n.nonce||n.getAttribute('nonce'));
+var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
+g.src = 'https://api.reftagger.com/v2/RefTagger.js';
+g.nonce = refTagger.settings.nonce;
+s.parentNode.insertBefore(g, s);
+}(document, 'script'));
+}, "3000")
+</script>
+```
